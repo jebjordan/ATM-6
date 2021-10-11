@@ -1,7 +1,12 @@
 {
     "flower": "tag:tombstone:decorative_graves",
     "maxTimeInHive": 1200,
-    "traits": ["nether"],
+    "traits": [
+        "nether"
+    ],
+    "creator": "NoControl",
+    "lore": "You are never truly alone.\nWherever you are, you have ghosts,\nand if you have ghosts, you have everything.",
+    "loreColor": "#626262",
     "hasHoneycomb": true,
     "ColorData": {
         "primaryColor": "#F5F5F5",
@@ -18,10 +23,12 @@
     "MutationData": {
         "hasMutation": true,
         "mutationCount": 1,
-        "mutations": [{
+        "mutations": [
+            {
                 "type": "BLOCK_TO_ITEM",
                 "inputID": "resourcefulbees:papa_beemeritus_honeycomb_block",
-                "outputs": [{
+                "outputs": [
+                    {
                         "outputID": "tombstone:grave_dust",
                         "weight": 80
                     },
@@ -44,28 +51,16 @@
         "mainOutput": "tombstone:grave_dust",
         "mainOutputWeight": 0.20,
         "mainOutputCount": 1,
-        "mainNBTData": {},
-        "secondaryOutput": "resourcefulbees:wax",
+        "secondaryOutput": "tombstone:essence_of_undeath",
         "secondaryOutputWeight": 0.20,
         "secondaryOutputCount": 1,
-        "secondaryNBTData": {},
         "bottleOutput": "minecraft:honey_bottle",
         "bottleOutputWeight": 0.25,
         "bottleOutputCount": 1,
-        "bottleNBTData": {},
-        "recipeTime": 200,
-        "hasFluidOutput": false
+        "recipeTime": 200
     },
     "SpawnData": {
-        "canSpawnInWorld": false,
-        "biomeWhitelist": "",
-        "biomeBlacklist": "",
-        "spawnWeight": 2,
-        "minYLevel": 0,
-        "maxYLevel": 255,
-        "minGroupSize": 1,
-        "maxGroupSize": 3,
-        "lightLevel": "ANY"
+        "canSpawnInWorld": false
     },
     "BreedData": {
         "isBreedable": true,
