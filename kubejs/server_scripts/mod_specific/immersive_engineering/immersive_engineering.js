@@ -35,17 +35,17 @@ onEvent('recipes', e => {
     S: '#forge:slag'
   }).id('kubejs:engineersdecor/slag_brick_block')
   e.shaped('12x immersiveengineering:concrete', ['SBS', 'GUG', 'SBS'], {
-    B: '#forge:clay',
-    S: '#forge:slag',
+    B: '#forge:storage_blocks/clay',
+    S: ['#forge:slag', '#forge:sand'],
     G: '#forge:gravel',
-    U: ['minecraft:water_bucket', 'create:honey_bucket', 'create:chocolate_bucket', 'mahoutsukai:murky_bucket']
+    U: '#misctags:water/items'
   }).id('kubejs:immersiveengineering/concrete')
   e.shaped('8x immersivepetroleum:asphalt', ['SBS', 'GOG', 'SBS'], {
     B: '#forge:bitumen',
     S: ['#forge:sand', '#forge:slag'],
     G: '#forge:gravel',
-    O: '#forge:water'
-  }).id('kubejs:engineersdecor/slag_brick_block')
+    O: '#misctags:water/items'
+  }).id('kubejs:immersivepetroleum/asphalt')
 
   modifyShaped(e, 'engineerstools:crushing_hammer', 1, ['RI ', 'BS ', '  S'], {
     R: '#forge:string',
@@ -59,6 +59,9 @@ onEvent('recipes', e => {
     T: '#forge:treated_wood',
     R: 'mekanism:resistive_heater'
   })
+
+  e.replaceInput('immersiveengineering:hammer', '#misctags:immersive_engineering_hammer')
+  e.replaceInput('immersiveengineering:wirecutter', '#misctags:immersive_engineering_wirecutter')
 
   removeRecipeByID(e, [
     /^immersiveengineering:crafting\/ingot_.*_to_storage_.*/,

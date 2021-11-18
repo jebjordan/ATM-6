@@ -27,7 +27,7 @@ onEvent('item.tooltip', e => {
     'draconicevolution:creative_op_capacitor'
   ]
 
-  let formattedTooltip = (item, tooltip, signature) => {
+  let formattedTooltip = (item, tooltip) => {
     e.add(item, '')
     let line = ''
     tooltip.split(' ').forEach(word => {
@@ -38,7 +38,6 @@ onEvent('item.tooltip', e => {
       }
     })
     if (line.length > 0) e.add(item, Text.of(line).darkPurple())
-    if (signature) e.add(item, Text.of(`   - ${signature}`).darkRed())
     e.add(item, '')
   }
   //#endregion
@@ -62,6 +61,9 @@ onEvent('item.tooltip', e => {
   formattedTooltip('craftingstation:crafting_station', 'Crafting Station Mk.II')
   formattedTooltip('atmadditions:atm_star_shard', 'Check JEI Info page for more info')
   formattedTooltip('appliedenergistics2:quantum_entangled_singularity', 'To make this, you must use Ender Pearls, not Ender Dust')
+  formattedTooltip('astralsorcery:altar_discovery', 'Check the Astral Tome for more info')
+  formattedTooltip('enderchests:ender_chest', 'Increase the capacity by shift right-clicking with Eye of Ender or Ender Pearls')
+  formattedTooltip('enderchests:ender_tank', 'Increase the capacity by shift right-clicking with Eye of Ender or Ender Pearls')
 
   //#region Pipez
   //pipes

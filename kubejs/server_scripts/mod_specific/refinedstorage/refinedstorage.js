@@ -23,12 +23,38 @@ onEvent('recipes', e => {
     P: 'refinedstorage:improved_processor',
     C: '#refinedstorage:crafter'
   }).id(`kubejs:extrastorage/iron_crafter`)
+  //gold-netherite crafter temp till mod updates with proper tags
+  modifyShaped(e, 'extrastorage:gold_crafter', 1, ['BSB', 'PCP', 'B B'], {
+    S: '#forge:chests',
+    B: '#forge:storage_blocks/gold',
+    P: 'extrastorage:neural_processor',
+    C: 'extrastorage:iron_crafter'
+  })
+  modifyShaped(e, 'extrastorage:diamond_crafter', 1, ['BSB', 'PCP', 'B B'], {
+    S: '#forge:chests',
+    B: '#forge:storage_blocks/diamond',
+    P: 'extrastorage:neural_processor',
+    C: 'extrastorage:gold_crafter'
+  })
+  modifyShaped(e, 'extrastorage:netherite_crafter', 1, ['BSB', 'PCP', 'B B'], {
+    S: '#forge:chests',
+    B: '#forge:storage_blocks/netherite',
+    P: 'extrastorage:neural_processor',
+    C: 'extrastorage:diamond_crafter'
+  })
   e.shaped(`creativecrafter:creative_crafter`, [`BUB`, `PCP`, `BUB`], {
     B: `#forge:storage_blocks/netherite`,
     P: `extradisks:withering_processor`,
     C: `extrastorage:netherite_crafter`,
     U: `#forge:ingots/unobtainium`
   }).id(`kubejs:creativecrafter/creative_crafter`)
+
+  e.shaped('extradisks:1024k_storage_part', ['ana', 'fbf', 'afa'], {
+    a: 'refinedstorage:advanced_processor',
+    f: 'extradisks:256k_storage_part',
+    b: '#forge:dusts/redstone',
+    n: 'refinedstorage:quartz_enriched_iron'
+  }).id('kubejs:1024k_storage_part')
   e.shaped('refinedstorage:4096k_fluid_storage_part', ['ana', 'fbf', 'afa'], {
     a: 'refinedstorage:advanced_processor',
     f: 'refinedstorage:1024k_fluid_storage_part',
@@ -115,6 +141,7 @@ onEvent('recipes', e => {
 
 
   removeRecipeByID(e, [
+    'extradisks:part/1024k_storage_part',
     'refinedstorage:part/4096k_fluid_storage_part',
     'extradisks:part/4096k_storage_part',
     'extradisks:part/16384k_fluid_storage_part',
@@ -127,6 +154,7 @@ onEvent('recipes', e => {
     'extradisks:part/1048576k_storage_part',
     'extradisks:part/infinite_fluid_storage_part',
     'extradisks:part/infinite_storage_part',
+    /^extrastorage:(?:part|disk|storage_block)\/.+/,
     'creativecrafter:creative_crafter',
     'creativewirelesstransmitter:creative_wireless_transmitter',
     'extrastorage:iron_crafter'

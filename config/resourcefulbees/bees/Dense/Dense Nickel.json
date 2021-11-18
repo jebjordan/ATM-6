@@ -11,6 +11,7 @@
     "modelType": "ORE"
   },
   "CombatData": {
+    "isInvulnerable": true,
     "isPassive": false,
     "removeStingerOnAttack": false,
     "inflictsPoison": true,
@@ -62,6 +63,6 @@
     "isBreedable": false
   },
   "TraitData": {
-    "hasTraits": false
+    "hasTraits": true
   }
 }
