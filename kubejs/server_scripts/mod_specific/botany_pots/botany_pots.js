@@ -2,25 +2,28 @@ onEvent('recipes', e => {
   e.remove({ id: /botanypots:crafting\/hopper.*_botany_pot/ })
   e.remove({ id: /botanypots:crafting\/compact_hopper.*botany_pot/ })
 
-  let pots = [
-    'botanypots:botany_pot',
-    'botanypots:white_botany_pot',
-    'botanypots:orange_botany_pot',
-    'botanypots:magenta_botany_pot',
-    'botanypots:light_blue_botany_pot',
-    'botanypots:yellow_botany_pot',
-    'botanypots:lime_botany_pot',
-    'botanypots:pink_botany_pot',
-    'botanypots:gray_botany_pot',
-    'botanypots:light_gray_botany_pot',
-    'botanypots:cyan_botany_pot',
-    'botanypots:purple_botany_pot',
-    'botanypots:blue_botany_pot',
-    'botanypots:brown_botany_pot',
-    'botanypots:green_botany_pot',
-    'botanypots:red_botany_pot',
-    'botanypots:black_botany_pot',
-  ]
+  function hopperRecipe(color) {
+    let variant = color ? `${color}_botany_pot` : 'botany_pot';
+    e.shaped(`botanypots:hopper_${variant}`, ['MPM', ' H '], {
+      M: '#forge:nuggets/terrasteel',
+      P: `botanypots:${variant}`,
+      H: ['botania:hopperhock', 'botania:hopperhock_chibi']
+    }).id(`kubejs:botany_pots/botania/hopper_${variant}`)
+    e.shaped(`botanypots:hopper_${variant}`, ['MPM', ' H '], {
+      M: `pneumaticcraft:printed_circuit_board`,
+      P: `botanypots:${variant}`,
+      H: `pneumaticcraft:omnidirectional_hopper`
+    }).id(`kubejs:botany_pots/pneumaticraft/hopper_${variant}`)
+
+    if (color) {
+      e.shapeless(`botanypots:${variant}`, ['#misctags:botany_pots', `#forge:dyes/${color}`]).id(`kubejs:botany_pots/dye/${variant}`)
+      e.shapeless(`botanypots:hopper_${variant}`, ['#botanypots:hopper_botany_pots', `#forge:dyes/${color}`]).id(`kubejs:botany_pots/dye/hopper_${variant}`)
+    }
+  }
+
+  hopperRecipe()
+  colors.forEach(color => hopperRecipe(color))
+
   //#region FUNCTIONS
   //Soils
   function makeFarmland(input, name, categories, growthModifier) {
@@ -106,40 +109,29 @@ onEvent('recipes', e => {
     'dye',
     'fish',
     'honey',
-    'iridium',
     'mystical_flower',
     'nature',
     'nether',
     'pig',
-    'rubber',
     'saltpeter',
     'sheep',
-    'silicon',
     'slime',
     'squid',
-    'sulfur',
     'turtle',
-    'sky_stone',
     'apatite'
   ], 1750, 'prudentium')
   //Tier 3 Crops
   tier([
     'azure_silver',
-    'brass',
-    'bronze',
     'certus_quartz',
     'creeper',
     'crimson_iron',
-    'ender_biotite',
     'glowstone',
-    'graphite',
     'iron',
     'lead',
-    'manasteel',
     'nether_quartz',
     'obsidian',
     'prismarine',
-    'quartz_enriched_iron',
     'rabbit',
     'redstone',
     'silver',
@@ -148,67 +140,36 @@ onEvent('recipes', e => {
     'tin',
     'zinc',
     'zombie',
-    'lumium',
-    'fluorite',
-    'tinkers_bronze',
-    'slimesteel',
-    'pig_iron',
-    'steeleaf',
-    'ironwood'
+    'fluorite'
   ], 2500, 'tertium')
   //Tier 4 Crops
   tier([
     'azure_electrum',
     'blaze',
-    'chrome',
-    'constantan',
-    'crimson_steel',
-    'electrum',
-    'elementium',
     'end',
     'enderman',
     'experience',
-    'fluix',
     'ghast',
     'gold',
-    'invar',
     'lapis_lazuli',
-    'mithril',
     'nickel',
-    'oratchalcum',
     'osmium',
-    'refined_glowstone',
-    'refined_obsidian',
-    'steel',
-    'titanium',
-    'tungsten',
-    'enderium',
-    'compressed_iron',
-    'hop_graphite',
-    'cobalt',
-    'rose_gold',
-    'knightmetal',
-    'fiery_ingot'
+    'cobalt'
   ], 3250, 'imperium')
   //Tier 5 Crops
   tier([
     'diamond',
     'emerald',
     'netherite',
-    'terrasteel',
     'uraninite',
     'wither_skeleton',
     'platinum',
-    'uranium',
-    'manyullyn',
-    'queens_slime',
-    'hepatizon'
+    'uranium'
   ], 4000, 'supremium')
   //Tier 6 Crops
   tier([
     'dragon_egg',
-    'nether_star',
-    'nitro_crystal',
+    'nether_star'
   ], 4750, 'insanium')
   //Magical Crops
   tier([
@@ -235,25 +196,5 @@ onEvent('recipes', e => {
         maxRolls: 1
       }]
     }).id(`kubejs:botany_pots/botanytrees/${tree}_tree`)
-  })
-
-  colors.forEach(color => {
-    e.shaped(item.of(`botanypots:hopper_${color}_botany_pot`), ['MPM', ' H '], {
-      M: '#forge:nuggets/terrasteel',
-      P: `botanypots:${color}_botany_pot`,
-      H: ['botania:hopperhock', 'botania:hopperhock_chibi']
-    })
-    e.shapeless(`botanypots:${color}_botany_pot`, [pots, `#forge:dyes/${color}`])
-    e.shapeless(`botanypots:hopper_${color}_botany_pot`, ['#botanypots:hopper_botany_pots', `#forge:dyes/${color}`])
-  })
-
-  modifyShaped(e, 'botanypots:botany_pot', 1, ['T T', 'TPT', ' T '], {
-    T: 'minecraft:terracotta',
-    P: 'minecraft:flower_pot'
-  })
-  modifyShaped(e, 'botanypots:hopper_botany_pot', 1, ['MPM', ' H '], {
-    M: '#forge:nuggets/terrasteel',
-    P: 'botanypots:botany_pot',
-    H: ['botania:hopperhock', 'botania:hopperhock_chibi']
   })
 })

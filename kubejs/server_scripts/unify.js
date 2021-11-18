@@ -25,7 +25,7 @@ onEvent('recipes', e => {
 
     e.recipes.minecraft.smelting(ingotItem, `#forge:dusts/${name}`).xp(0.5)
     e.recipes.minecraft.blasting(ingotItem, `#forge:dusts/${name}`).xp(0.5)
-    e.recipes.pedestals.pedestal_crushing({ ingredient: { tag: `forge:ingots/${name}` }, result: { item: dustItem } })
+    e.recipes.pedestals.pedestal_crushing({ ingredient: { tag: `forge:ingots/${name}` }, result: { item: dustItem, count: 1 } })
     e.recipes.appliedenergistics2.grinder({ input: { tag: `forge:ingots/${name}` }, result: { primary: { item: dustItem } }, turns: 8 })
     e.recipes.immersiveengineering.crusher({ secondaries: [], result: { base_ingredient: { item: dustItem } }, input: { tag: `forge:ingots/${name}` }, energy: 3000 })
 
@@ -111,13 +111,107 @@ onEvent('recipes', e => {
   unifyCraftMetal('electrum', 'thermal:electrum_ingot', 'thermal:electrum_dust', 'thermal:electrum_block', 'thermal:electrum_nugget')
   // #endregion Metal Unification
   // #region Plate Unification
-  utils.listOf(['iron', 'gold', 'copper', 'tin', 'lead', 'silver', 'nickel', 'bronze', 'electrum', 'invar', 'constantan', 'signalum', 'lumium', 'enderium', 'aluminum']).forEach(type => {
-    e.replaceInput(`thermal:${type}_plate`, `#forge:plates/${type}`)
-    e.replaceInput(`immersiveengineering:plate_${type}`, `#forge:plates/${type}`)
-    e.replaceInput(type == 'gold' ? `create:${type}en_sheet` : `create:${type}_sheet`, `#forge:plates/${type}`)
-    e.replaceOutput(`immersiveengineering:plate_${type}`, type == 'aluminum' ? `immersiveengineering:plate_${type}` : `thermal:${type}_plate`)
-    e.replaceOutput(type == 'gold' ? `create:${type}en_sheet` : `create:${type}_sheet`, type == 'aluminum' ? `immersiveengineering:plate_${type}` : `thermal:${type}_plate`)
-  })
+  function plateCasting(material, coolingTime, result) {
+    let alltheores = ['aluminum', 'copper', 'lead', 'nickel', 'osmium', 'platinum', 'silver', 'tin', 'uranium', 'zinc']
+    let fluid = alltheores.includes(material) ? {tag: `forge:molten_${material}`, amount: 144} : {name: `tconstruct:molten_${material}`, amount: 144}
+
+    e.custom({
+      type: 'tconstruct:casting_table',
+      conditions: [
+        {
+          value: {tag: `forge:plates/${material}`, type: 'forge:tag_empty'},
+          type: 'forge:not'
+        }
+      ],
+      cast: {tag: 'tconstruct:casts/multi_use/plate'},
+      fluid: fluid,
+      result: {item: result},
+      cooling_time: coolingTime
+    }).id(`kubejs:smeltery/casting/metal/${material}/plate_gold_cast`)
+    e.custom({
+      type: 'tconstruct:casting_table',
+      conditions: [
+        {
+          value: {tag: `forge:plates/${material}`, type: 'forge:tag_empty'},
+          type: 'forge:not'
+        }
+      ],
+      cast: {tag: 'tconstruct:casts/single_use/plate'},
+      cast_consumed: true,
+      fluid: fluid,
+      result: {item: result},
+      cooling_time: coolingTime
+    }).id(`kubejs:smeltery/casting/metal/${material}/plate_sand_cast`)
+  }
+
+  function platePressing(material, result) {
+    e.custom({
+      type: 'immersiveengineering:metal_press',
+      mold: {item: 'immersiveengineering:mold_plate'},
+      result: {item: result},
+      conditions: [
+        {
+          value: {tag: `forge:ingots/${material}`, type: 'forge:tag_empty'},
+          type: 'forge:not'
+        },
+        {
+          value: {tag: `forge:plates/${material}`, type: 'forge:tag_empty'},
+          type: 'forge:not'
+        }
+      ],
+      input: {tag: `forge:ingots/${material}`},
+      energy: 2400
+    }).id(`kubejs:metalpress/plate_${material}`)
+  }
+
+  function plateProcessing(types) {
+    types.forEach(([material, coolingTime, result]) => {
+      e.replaceInput(`thermal:${material}_plate`, `#forge:plates/${material}`)
+      e.replaceInput(`immersiveengineering:plate_${material}`, `#forge:plates/${material}`)
+      e.replaceInput(material === 'gold' ? `create:${material}en_sheet` : `create:${material}_sheet`, `#forge:plates/${material}`)
+
+      result = result ? result : `thermal:${material}_plate`
+
+      e.remove({id: `immersiveengineering:crafting/plate_${material}_hammering`});
+      e.shapeless(result, [`#forge:ingots/${material}`, '#misctags:immersive_engineering_hammer']).id(`kubejs:crafting/plate_${material}_hammering`);
+
+      e.remove({id: `create:pressing/${material}_ingot`})
+      e.recipes.create.pressing(result, `#forge:ingots/${material}`).id(`kubejs:pressing/${material}_ingot`)
+
+      if (coolingTime !== null) {
+        e.remove({id: `tconstruct:smeltery/casting/metal/${material}/plate_gold_cast`})
+        e.remove({id: `tconstruct:smeltery/casting/metal/${material}/plate_sand_cast`})
+        plateCasting(material, coolingTime, result)
+      }
+
+      e.remove({id: `immersiveengineering:metalpress/plate_${material}`})
+      platePressing(material, result)
+
+      e.remove({id: `thermal:machine/press/press_${material}_ingot_to_plate`})
+      e.recipes.thermal.press(result, `#forge:ingots/${material}`).id(`kubejs:machine/press/press_${material}_ingot_to_plate`)
+    })
+  }
+
+  plateProcessing([
+    ['aluminum', 47, 'immersiveengineering:plate_aluminum'],
+    ['steel', 50, 'immersiveengineering:plate_steel'],
+    ['uranium', 50, 'immersiveengineering:plate_uranium'],
+    ['iron', 60],
+    ['gold', 57],
+    ['copper', 50],
+    ['tin', 39],
+    ['lead', 43],
+    ['silver', 60],
+    ['nickel', 65],
+    ['bronze', 57],
+    ['electrum', 59],
+    ['invar', 63],
+    ['constantan', 64],
+    ['signalum', null],
+    ['lumium', null],
+    ['enderium', null],
+    ['brass', 57, 'create:brass_sheet']
+  ])
   // #endregion Plate Unification
   // #region Tinkers Unification
   function tinkerMelting(material, type, typeValues, temperature, time, byproduct) {
@@ -371,7 +465,9 @@ onEvent('recipes', e => {
   e.replaceInput('iceandfire:sapphire', '#forge:gems/sapphire')
   e.replaceInput('iceandfire:sapphire_block', '#forge:storage_blocks/sapphire')
   e.replaceInput('minecraft:stick', '#forge:rods/wooden')
-  e.replaceInput('pneumaticcraft:plastic','#forge:plastic')
+  e.replaceInput('pneumaticcraft:plastic', '#forge:plastic')
+  e.replaceInput('thermal:coal_coke', '#forge:coal_coke')
+  e.replaceInput('immersiveengineering:coal_coke', '#forge:coal_coke')
 
   e.replaceOutput('immersivepetroleum:bitumen', 'thermal:bitumen')
   e.replaceOutput('lazierae2:coal_dust', 'mekanism:dust_coal')
@@ -382,30 +478,12 @@ onEvent('recipes', e => {
   e.replaceOutput('immersiveengineering:dust_sulfur', 'thermal:sulfur_dust')
   e.replaceOutput('mekanism:dust_quartz', 'thermal:quartz_dust')
   e.replaceOutput('appliedenergistics2:nether_quartz_dust', 'thermal:quartz_dust')
+  e.replaceOutput('thermal:coal_coke', 'immersiveengineering:coal_coke')
+  e.replaceOutput('thermal:coal_coke_block', 'immersiveengineering:coke')
+  e.replaceOutput('mekanism:dust_diamond', 'thermal:diamond_dust')
+  e.replaceOutput('createaddition:diamond_grit', 'thermal:diamond_dust')
+  e.remove({id: 'thermal:storage/coal_coke_block'})
 
-  // #region ExtraDisks & ExtraStorage
-  function unifyExtraStorageDisks(entries) {
-    entries.forEach(size => {
-      utils.listOf([
-        ['parts', 'part', 'part', 'storagepart'],
-        ['storage_blocks', 'storage_block', 'block', 'block'],
-        ['disks', 'disk/shaped', 'disk', 'disk']
-      ]).forEach(([tagCategory, recipeCategory, disk, storage]) => {
-        e.replaceInput(`extrastorage:${storage}_${size}k`, `#refinedstorage:${tagCategory}/items/${size}k`)
-        e.replaceInput(`extrastorage:${storage}_${size * 64}k_fluid`, `#refinedstorage:${tagCategory}/fluids/${size * 64}k`)
-        e.replaceOutput(`extrastorage:${storage}_${size}k`, `extradisks:${size}k_storage_${disk}`)
-        e.replaceOutput(`extrastorage:${storage}_${size * 64}k_fluid`, `extradisks:${size * 64}k_fluid_storage_${disk}`)
-
-        e.remove({ id: `extrastorage:${recipeCategory}/${storage}_${size}k` })
-        e.remove({ id: `extrastorage:${recipeCategory}/${storage}_${size * 64}k_fluid` })
-      })
-      e.remove({ id: `extrastorage:disk/shapeless/disk_${size}k` })
-      e.remove({ id: `extrastorage:disk/shapeless/disk_${size * 64}k_fluid` })
-    })
-  }
-
-  unifyExtraStorageDisks([256, 1024, 4096, 16384])
-  // #endregion ExtraDisks & ExtraStorage
   // #region Honey
   let simpleHoneys = ['cofh_core:honey', 'resourcefulbees:honey', 'cyclic:honey', 'create:honey']
   let customHoneys = ['resourcefulbees:catnip_honey', 'resourcefulbees:rainbow_honey']
@@ -600,19 +678,20 @@ onEvent('recipes', e => {
   // creosote
   e.recipes.thermal.pyrolyzer([Fluid.of('immersiveengineering:creosote', 250), 'minecraft:charcoal'], '#minecraft:logs').id('kubejs:thermal/pyrolyzer/charcoal')
   e.recipes.thermal.pyrolyzer([Fluid.of('immersiveengineering:creosote', 5000), 'immersiveengineering:coke'], '#forge:storage_blocks/coal').id('kubejs:thermal/pyrolyzer/coke_block')
+  e.recipes.thermal.pyrolyzer([Fluid.of('immersiveengineering:creosote', 250), 'immersiveengineering:coal_coke'], '#minecraft:coals').id('kubejs:thermal/pyrolyzer/coal_coke')
   e.custom({
     type: 'industrialforegoing:dissolution_chamber',
     input: [{ tag: 'minecraft:planks' }],
-    inputFluid: { FluidName: 'immersiveengineering:creosote', Amount: 125 },
+    inputFluid: "{ FluidName: \"immersiveengineering:creosote\", Amount: 125 }",
     processingTime: 5,
     output: { item: 'immersiveengineering:treated_wood_horizontal' }
-  })
+  }).id('kubejs:dissolution_chamber/immersiveengineering/treated_wood_horizontal')
   e.custom({
     type: 'industrialforegoing:dissolution_chamber',
     input: [{ tag: 'minecraft:planks' }],
-    inputFluid: { FluidName: 'thermal:creosote', Amount: 125 },
+    inputFluid: "{ FluidName: \"thermal:creosote\", Amount: 125 }",
     processingTime: 5,
     output: { item: 'immersiveengineering:treated_wood_horizontal' }
-  })
+  }).id('kubejs:dissolution_chamber/thermal/treated_wood_horizontal')
   // #endregion Oil
 })
