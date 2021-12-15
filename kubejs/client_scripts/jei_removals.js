@@ -127,10 +127,13 @@ onEvent('jei.hide.items', e => {
     'mekanism:dust_sulfur',
     'translocators:diamond_nugget',
     'createaddition:diamond_grit',
+    'zycraft:aluminium_block',
+    'zycraft:aluminium',
     'zycraft:aluminium_foil',
     'zycraft:quartz_bucket',
     'zycraft:aluminium_can',
-    'compactmachines:tunnel'
+    'compactmachines:tunnel',
+    'projectred-core:copper_ingot'
   ])
 
   enviroStonesMats.forEach(stone => e.hide(`/enviromats:${stone}_.*/`))

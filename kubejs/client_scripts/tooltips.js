@@ -56,15 +56,17 @@ onEvent('item.tooltip', e => {
   formattedTooltip('zycraft:zychorium_ice', 'Turns adjacent water to ice.')
   formattedTooltip('zycraft:fabricator', 'Autocrafter that can push the results into adjacent fabricators.')
   formattedTooltip('mekanism:creative_energy_cube', 'Will delete energy if not filled! Check JEI Info tab for more info on charging the cube')
-  formattedTooltip('mahoutsukai:caliburn', 'This item is obtained by throwing an enchanted sword into a lake created by the Power Consolidation ritual. The damage cap can be increased by throwing the sword back into the lake with an ATM Star')
-  formattedTooltip('mahoutsukai:morgan', 'This item is obtained by killing a tamed wolf with a Caliburn. The damage cap can be increased by throwing the sword back into the lake with an ATM Star')
+  formattedTooltip('mahoutsukai:caliburn', 'This item is obtained by throwing an enchanted sword into a lake created by the Power Consolidation ritual. The damage cap can be increased by throwing the sword back into the lake with up to five ATM Stars. This can only be done once.')
+  formattedTooltip('mahoutsukai:morgan', 'This item is obtained by killing a tamed wolf with a Caliburn. The damage cap will be the same as the Caliburn used to create it.')
   formattedTooltip('craftingstation:crafting_station', 'Crafting Station Mk.II')
   formattedTooltip('atmadditions:atm_star_shard', 'Check JEI Info page for more info')
   formattedTooltip('appliedenergistics2:quantum_entangled_singularity', 'To make this, you must use Ender Pearls, not Ender Dust')
   formattedTooltip('astralsorcery:altar_discovery', 'Check the Astral Tome for more info')
-  formattedTooltip('enderchests:ender_chest', 'Increase the capacity by shift right-clicking with Eye of Ender or Ender Pearls')
-  formattedTooltip('enderchests:ender_tank', 'Increase the capacity by shift right-clicking with Eye of Ender or Ender Pearls')
 
+
+  e.add(['enderchests:ender_chest', 'enderchests:ender_bag', 'enderchests:ender_pouch', 'endertanks:ender_tank', 'endertanks:ender_bucket'], [
+    Text.of('Recipe Removed to Convert to EnderStorage').red()
+  ])
   //#region Pipez
   //pipes
   e.add('pipez:item_pipe', [
